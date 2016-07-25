@@ -10,7 +10,7 @@ import com.mysql.jdbc.Statement;
 
 public class DBConnect {
 	private static final String USERNAME = "root";
-	private static final String PASSWORD = "hang9194";
+	private static final String PASSWORD = "";
 	private static final String CONN_STRING = "jdbc:mysql://localhost/crimePatrol";
 	
 	public static void main (String[]args)
