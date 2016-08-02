@@ -28,15 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import jdk.nashorn.internal.parser.JSONParser;
-
-import java.util.Enumeration;
 
 /**
  * Servlet implementation class updateJSON
@@ -112,16 +103,47 @@ public class updateJSON extends HttpServlet {
 		      json.put("lastName", "Smith");
 		      json.put("ID", "32A");
 		      
-		      JsonArray routeoptions = new JsonArray();
+		      JSONArray routeoptions = new JSONArray();
+		      JSONObject route1 = new JSONObject();
+		      route1.put("time-UTM", 1465832832);
+		      route1.put("Location", "Wedgewood Ave and 24th");
+		      route1.put("time to", 20);
+		      route1.put("distance to", 1.2);
+		      route1.put("route description", "A lot of activity near the liquor store. Watch out during peak hours of 1-4 pm");
+		      routeoptions.put(route1);
 		      json.put("route options", routeoptions);
 		      
-		      JsonArray patrols = new JsonArray();
+		      JSONArray patrols = new JSONArray();
+		      JSONObject patrol1 = new JSONObject();
+		      patrol1.put("ID", "35A");
+		      patrol1.put("Location", "Blair Ave.");
+		      patrol1.put("GPS lat", 36.144);
+		      patrol1.put("GPS long", -86.796);
+		      patrol1.put("distance to", 1.2);
+		      patrol1.put("Precinct", "Midtown Hills");
+		      patrols.put(patrol1);
 		      json.put("Patrols", patrols);
 		      
-		      JsonArray oncall = new JsonArray();
+		      JSONArray oncall = new JSONArray();
+		      JSONObject oncall1 = new JSONObject();
+		      oncall1.put("time-UTM", 1465832810);
+		      oncall1.put("Location", "Loc 1");
+		      oncall1.put("Description", "Robbery");
+		      oncall1.put("GPS lat", 36.144);
+		      oncall1.put("GPS long", -86.796);
+		      oncall1.put("Precinct", "South");
+		      oncall.put(oncall1);
 		      json.put("On Call Crimes", oncall);
 		      
-		      JsonArray historic = new JsonArray();
+		      JSONArray historic = new JSONArray();
+		      JSONObject historic1 = new JSONObject();
+		      historic1.put("time-UTM", 1465832810);
+		      historic1.put("Location", "Liquor store on 14th");
+		      historic1.put("Description", "Burglary");
+		      historic1.put("GPS lat", 36.1351);
+		      historic1.put("GPS long", -86.796);
+		      historic1.put("Precinct", "South");
+		      historic.put(historic1);
 		      json.put("Historic Crimes", historic);
 		      
 		      //------------------------------------------
