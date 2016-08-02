@@ -1,3 +1,0 @@
-INDEX VERSION 1.126
-/Users/genexli/Documents/policeAppServer/.metadata/.plugins/org.eclipse.jst.jsp.core/jspsearch/453753812.index
-/policeserver/src
