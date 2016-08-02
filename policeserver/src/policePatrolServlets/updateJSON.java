@@ -121,8 +121,15 @@ public class updateJSON extends HttpServlet {
 				String jsonData = buffer.toString();
 				System.out.println(jsonData);
 				JSONObject obj = new JSONObject(jsonData);
-				
-				
+				//edit
+				String date = obj.getString("Datetime");
+				String id = obj.getString("ID");
+				double lat = obj.getDouble("latitude");
+				double lng = obj.getDouble("longitude");
+				sql = "INSERT INTO `AVLData`(Datetime,CarID,Lat,Long) VALUES ('" + date + "','" + id + "','" + lat
+						+ "','" + lng + "')";
+				stmt = (Statement) c.createStatement();
+				stmt.executeUpdate(sql);
 				/*
 				JSONArray data = obj.getJSONArray("police");
 				JSONObject dataArrival = data.getJSONObject(0);
@@ -139,6 +146,7 @@ public class updateJSON extends HttpServlet {
 				}*/
 				stmt.close();
 				c.close();
+				System.out.println("INSERT JSON: Finished");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -237,9 +245,9 @@ public class updateJSON extends HttpServlet {
 				       + ", "+res.getString("TABLE_NAME")
 				       + ", "+res.getString("TABLE_TYPE")
 				       + ", "+res.getString("REMARKS")); 
+				c.close();
 				return true;
 			}
-			c.close();
 		} catch ( Exception e ) {
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 			System.exit(0);
