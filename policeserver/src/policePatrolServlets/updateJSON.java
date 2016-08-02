@@ -81,6 +81,10 @@ public class updateJSON extends HttpServlet {
 		     String sql = "SELECT Datetime, CarID, Lat, Long FROM AVLData";
 		      ResultSet rs = stmt.executeQuery(sql);
 		      //STEP 5: Extract data from result set
+		      
+		      //--------------------------------------------
+		      //TODO: Fix this to return the correct thing.
+		      //For right now just hardcode the response. 
 		      JSONObject json = new JSONObject();
 		      JsonArray policeCars = new JsonArray();
 		      JSONObject policeData;
@@ -103,6 +107,8 @@ public class updateJSON extends HttpServlet {
 		         policeCars.add(policeData.toString());
 		      }
 		      json.put("Police", policeCars);
+		      
+		      //------------------------------------------
 		      response.setContentType("application/json");
 		      response.getWriter().write(json.toString());
 		      stmt.close();
