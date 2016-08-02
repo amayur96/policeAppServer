@@ -41,6 +41,7 @@ import java.util.Enumeration;
  */
 @WebServlet("/updateJSON")
 public class updateJSON extends HttpServlet {
+	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -60,7 +61,7 @@ public class updateJSON extends HttpServlet {
 		Statement stmt = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = (Connection) DriverManager.getConnection("jdbc:sqlite:/Users/genexli/Documents/Databases/test.db");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 		     System.out.println("Creating statement...");
 		     stmt = c.createStatement();
 		     String sql = "SELECT Datetime, CarID, Lat, Long FROM AVLData";
@@ -107,7 +108,7 @@ public class updateJSON extends HttpServlet {
 		Statement stmt = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = (Connection) DriverManager.getConnection("jdbc:sqlite:/Users/genexli/Documents/Databases/test.db");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			String sql = "";
 			try {
 				StringBuilder buffer = new StringBuilder();
@@ -150,7 +151,7 @@ public class updateJSON extends HttpServlet {
 		Statement stmt = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = (Connection) DriverManager.getConnection("jdbc:sqlite:/Users/genexli/Documents/Databases/test.db");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			System.out.println("Opened database successfully");
 			String sql = "CREATE TABLE AVLData " +
 					"(Datetime TEXT NOT NULL, " +
@@ -173,7 +174,7 @@ public class updateJSON extends HttpServlet {
 		Connection c = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = (Connection) DriverManager.getConnection("jdbc:sqlite:/Users/genexli/Documents/Databases/test.db");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 		} catch ( Exception e ) {
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 			System.exit(0);
