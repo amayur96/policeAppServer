@@ -86,7 +86,7 @@ public class updateJSON extends HttpServlet {
 		      //TODO: Fix this to return the correct thing.
 		      //For right now just hardcode the response. 
 		      JSONObject json = new JSONObject();
-		      JsonArray policeCars = new JsonArray();
+		      /*JsonArray policeCars = new JsonArray();
 		      JSONObject policeData;
 		      while(rs.next()){
 		         //Retrieve by column name
@@ -106,7 +106,23 @@ public class updateJSON extends HttpServlet {
 		         policeData.put("Longitude", lng);
 		         policeCars.add(policeData.toString());
 		      }
-		      json.put("Police", policeCars);
+		      json.put("Police", policeCars);*/
+		      
+		      json.put("firstName", "John");
+		      json.put("lastName", "Smith");
+		      json.put("ID", "32A");
+		      
+		      JsonArray routeoptions = new JsonArray();
+		      json.put("route options", routeoptions);
+		      
+		      JsonArray patrols = new JsonArray();
+		      json.put("Patrols", patrols);
+		      
+		      JsonArray oncall = new JsonArray();
+		      json.put("On Call Crimes", oncall);
+		      
+		      JsonArray historic = new JsonArray();
+		      json.put("Historic Crimes", historic);
 		      
 		      //------------------------------------------
 		      response.setContentType("application/json");
