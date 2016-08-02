@@ -153,42 +153,6 @@ public class updateJSON extends HttpServlet {
 		}
 	}
 
-	public static void createTable()
-	{
-		Connection c = null;
-		Statement stmt = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
-			System.out.println("CREATE TABLE: Opened database successfully");
-			String sql = "CREATE TABLE AVLData " +
-					"(Datetime TEXT NOT NULL, " +
-					" CarID TEXT NOT NULL, " +
-					" Lat REAL, " +
-					" Long REAL)";
-			stmt = (Statement) c.createStatement();
-			stmt.executeUpdate(sql);
-			stmt.close();
-			c.close();
-		} catch ( Exception e ) {
-			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-			System.exit(0);
-		}
-		System.out.println("CREATE TABLE: Table created successfully");
-	}
-
-	public static void createDB()
-	{
-		Connection c = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
-		} catch ( Exception e ) {
-			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-			System.exit(0);
-		}
-		System.out.println("CREATE DB: Opened database successfully");
-	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		try {
@@ -215,6 +179,19 @@ public class updateJSON extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void createDB()
+	{
+		Connection c = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
+		} catch ( Exception e ) {
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+			System.exit(0);
+		}
+		System.out.println("CREATE DB: Opened database successfully");
 	}
 	
 	public boolean checkTableExists() {
@@ -244,5 +221,30 @@ public class updateJSON extends HttpServlet {
 		System.out.println("CHECK TABLE EXISTS: Table does not exist");
 		return false;
 	}
+	
+	public static void createTable()
+	{
+		Connection c = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
+			System.out.println("CREATE TABLE: Opened database successfully");
+			String sql = "CREATE TABLE AVLData " +
+					"(Datetime TEXT NOT NULL, " +
+					" CarID TEXT NOT NULL, " +
+					" Lat REAL, " +
+					" Long REAL)";
+			stmt = (Statement) c.createStatement();
+			stmt.executeUpdate(sql);
+			stmt.close();
+			c.close();
+		} catch ( Exception e ) {
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+			System.exit(0);
+		}
+		System.out.println("CREATE TABLE: Table created successfully");
+	}
+
 	
 }
