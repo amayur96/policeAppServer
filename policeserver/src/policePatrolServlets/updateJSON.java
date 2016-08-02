@@ -52,6 +52,17 @@ public class updateJSON extends HttpServlet {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		//TODO: We'll need multiple tables for the different categories in the JSON file.
+		//check if tables are created.
+		if(!checkTableExists()) {
+			createTable();
+		}
+		System.out.println("init worked");
+	}
 
 	/**
 	 * @throws IOException 
@@ -130,25 +141,10 @@ public class updateJSON extends HttpServlet {
 						+ "','" + lng + "')";
 				stmt = (Statement) c.createStatement();
 				stmt.executeUpdate(sql);
-				/*
-				JSONArray data = obj.getJSONArray("police");
-				JSONObject dataArrival = data.getJSONObject(0);
-				String date = dataArrival.getString("Datetime");
-				for (int i = 1; i < data.length(); i++) {
-					JSONObject policeCar = data.getJSONObject(i);
-					String id = policeCar.getString("CarID");
-					double lat = policeCar.getDouble("Lat");
-					double lng = policeCar.getDouble("Long");
-					sql = "INSERT INTO `AVLData`(Datetime,CarID,Lat,Long) VALUES ('" + date + "','" + id + "','" + lat
-							+ "','" + lng + "')";
-					stmt = (Statement) c.createStatement();
-					stmt.executeUpdate(sql);
-				}*/
 				stmt.close();
 				c.close();
 				System.out.println("INSERT JSON: Finished");
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (Exception e) {
@@ -194,9 +190,6 @@ public class updateJSON extends HttpServlet {
 		System.out.println("CREATE DB: Opened database successfully");
 	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if(!checkTableExists()) {
-			createTable();
-		}
 		
 		try {
 			sendJSON(response);
@@ -215,11 +208,7 @@ public class updateJSON extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//doGet(request, response);
-		/*createDB();*/
-		if(!checkTableExists()) {
-			createTable();
-		}
+		//doPost(request, response);
 		try {
 			insertJSONData(request);
 		} catch (Exception e) {
