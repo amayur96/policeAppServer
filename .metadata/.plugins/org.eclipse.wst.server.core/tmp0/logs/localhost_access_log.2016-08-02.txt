@@ -6,3 +6,5 @@
 0:0:0:0:0:0:0:1 - - [02/Aug/2016:09:46:58 -0500] "GET /policeserver/updateJSON HTTP/1.1" 200 -
 127.0.0.1 - - [02/Aug/2016:09:48:55 -0500] "GET / HTTP/1.1" 404 951
 0:0:0:0:0:0:0:1 - - [02/Aug/2016:09:48:55 -0500] "GET /policeserver/updateJSON HTTP/1.1" 200 -
+127.0.0.1 - - [02/Aug/2016:09:54:43 -0500] "GET / HTTP/1.1" 404 951
+0:0:0:0:0:0:0:1 - - [02/Aug/2016:09:55:18 -0500] "GET /policeserver/updateJSON HTTP/1.1" 200 -

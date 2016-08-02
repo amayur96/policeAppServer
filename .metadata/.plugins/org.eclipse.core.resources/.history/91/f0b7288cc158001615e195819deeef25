@@ -100,6 +100,8 @@ public class updateJSON extends HttpServlet {
 			e.printStackTrace();
 		}
 		
+		
+		
 	}
 
 	protected void insertJSONData(HttpServletRequest request) throws Exception{
