@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +35,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import jdk.nashorn.internal.parser.JSONParser;
+
 import java.util.Enumeration;
 
 /**
@@ -63,7 +65,7 @@ public class updateJSON extends HttpServlet {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
-		     System.out.println("Creating statement...");
+		     System.out.println("SEND JSON: Creating statement...");
 		     stmt = c.createStatement();
 		     String sql = "SELECT Datetime, CarID, Lat, Long FROM AVLData";
 		      ResultSet rs = stmt.executeQuery(sql);
@@ -119,6 +121,9 @@ public class updateJSON extends HttpServlet {
 				String jsonData = buffer.toString();
 				System.out.println(jsonData);
 				JSONObject obj = new JSONObject(jsonData);
+				
+				
+				/*
 				JSONArray data = obj.getJSONArray("police");
 				JSONObject dataArrival = data.getJSONObject(0);
 				String date = dataArrival.getString("Datetime");
@@ -131,7 +136,7 @@ public class updateJSON extends HttpServlet {
 							+ "','" + lng + "')";
 					stmt = (Statement) c.createStatement();
 					stmt.executeUpdate(sql);
-				}
+				}*/
 				stmt.close();
 				c.close();
 			} catch (SQLException e) {
@@ -151,7 +156,7 @@ public class updateJSON extends HttpServlet {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
-			System.out.println("Opened database successfully");
+			System.out.println("CREATE TABLE: Opened database successfully");
 			String sql = "CREATE TABLE AVLData " +
 					"(Datetime TEXT NOT NULL, " +
 					" CarID TEXT NOT NULL, " +
@@ -165,7 +170,7 @@ public class updateJSON extends HttpServlet {
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 			System.exit(0);
 		}
-		System.out.println("Table created successfully");
+		System.out.println("CREATE TABLE: Table created successfully");
 	}
 
 	public static void createDB()
@@ -178,10 +183,13 @@ public class updateJSON extends HttpServlet {
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 			System.exit(0);
 		}
-		System.out.println("Opened database successfully");
+		System.out.println("CREATE DB: Opened database successfully");
 	}
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		if(!checkTableExists()) {
+			createTable();
+		}
+		
 		try {
 			sendJSON(response);
 		} catch (SQLException e) {
@@ -200,8 +208,10 @@ public class updateJSON extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
-		createDB();
-		createTable();
+		/*createDB();*/
+		if(!checkTableExists()) {
+			createTable();
+		}
 		try {
 			insertJSONData(request);
 		} catch (Exception e) {
@@ -209,4 +219,33 @@ public class updateJSON extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean checkTableExists() {
+		Connection c = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			System.out.println("CHECK TABLE EXISTS: Creating a connection...");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
+			DatabaseMetaData md = c.getMetaData();
+			ResultSet res = md.getTables(null, null, "AVLData", null);
+			if(res.next()) {
+				System.out.println("CHECK TABLE EXISTS: Table already exists");
+				System.out.println(
+				        "   "+res.getString("TABLE_CAT") 
+				       + ", "+res.getString("TABLE_SCHEM")
+				       + ", "+res.getString("TABLE_NAME")
+				       + ", "+res.getString("TABLE_TYPE")
+				       + ", "+res.getString("REMARKS")); 
+				return true;
+			}
+			c.close();
+		} catch ( Exception e ) {
+			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+			System.exit(0);
+		}
+		System.out.println("CHECK TABLE EXISTS: Table does not exist");
+		return false;
+	}
+	
 }
