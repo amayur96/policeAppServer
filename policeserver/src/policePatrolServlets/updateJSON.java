@@ -117,7 +117,7 @@ public class updateJSON extends HttpServlet {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 		     System.out.println("GET PATROL ARRAY: Creating statement...");
 		     stmt = c.createStatement();
-		     String sql = "SELECT * FROM police WHERE Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID)";
+		     String sql = "SELECT * FROM police WHERE Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID) GROUP BY CarID";
 		      ResultSet rs = stmt.executeQuery(sql);
 		      
 		      
@@ -127,7 +127,6 @@ public class updateJSON extends HttpServlet {
 			      patrol.put("Location", "Blair Ave.");
 			      patrol.put("GPS lat", rs.getDouble("Lat"));
 			      patrol.put("GPS long", rs.getDouble("Long"));
-			      patrol.put("distance to", 1.2);
 			      patrol.put("Precinct", rs.getString("PRECINCT"));
 			      ret.put(patrol);
 		      }
@@ -240,8 +239,9 @@ private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IO
 				String id = obj.getString("ID");
 				double lat = obj.getDouble("latitude");
 				double lng = obj.getDouble("longitude");
-				sql = "INSERT INTO `police`(Datetime,CarID,Lat,Long) VALUES ('" + date + "','" + id + "','" + lat
-						+ "','" + lng + "')";
+				String precinct = obj.getString("precinct");
+				sql = "INSERT INTO `police`(Datetime,CarID,Lat,Long, PRECINCT) VALUES ('" + date + "','" + id + "','" + lat
+						+ "','" + lng + "','" + precinct + "')";
 				stmt = (Statement) c.createStatement();
 				stmt.executeUpdate(sql);
 				stmt.close();
