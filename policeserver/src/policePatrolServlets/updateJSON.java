@@ -62,9 +62,6 @@ public class updateJSON extends HttpServlet {
 	
 	protected void sendJSON(HttpServletResponse response, String precinct) throws SQLException, JSONException, IOException
 	{
-		if(precinct == null) {
-			// no precinct specified. Default should be to return all data.
-		}
 		
 		Connection c = null;
 		Statement stmt = null;
@@ -88,13 +85,13 @@ public class updateJSON extends HttpServlet {
 		      routeoptions.put(route1);
 		      json.put("route options", routeoptions);
 		      
-		      JSONArray patrols = getPatrolArray();
+		      JSONArray patrols = getPatrolArray(precinct);
 		      json.put("Patrols", patrols);
 		      
-		      JSONArray oncall = getOnCallCrimeArray();
+		      JSONArray oncall = getOnCallCrimeArray(precinct);
 		      json.put("On Call Crimes", oncall);
 		      
-		      JSONArray historic = getHistoricCrimeArray();
+		      JSONArray historic = getHistoricCrimeArray(precinct);
 		      json.put("Historic Crimes", historic);
 		      //------------------------------------------
 		      response.setContentType("application/json");
@@ -106,7 +103,7 @@ public class updateJSON extends HttpServlet {
 		
 	}
 	
-	private JSONArray getPatrolArray() throws SQLException, JSONException, IOException{
+	private JSONArray getPatrolArray(String precinct) throws SQLException, JSONException, IOException{
 		
 		JSONArray ret = new JSONArray();
 		
@@ -117,7 +114,15 @@ public class updateJSON extends HttpServlet {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 		     System.out.println("GET PATROL ARRAY: Creating statement...");
 		     stmt = c.createStatement();
-		     String sql = "SELECT * FROM police WHERE Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID) GROUP BY CarID";
+		     String sql;
+		     if(precinct == null) {
+		    	 sql = "SELECT * FROM police WHERE Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID) GROUP BY CarID";
+		    	 System.out.println("precinct was null");
+		     } else {
+		    	 sql = "SELECT * FROM police WHERE PRECINCT = '" + precinct + 
+		    			 "' AND Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID) GROUP BY CarID";
+		     }
+		     
 		      ResultSet rs = stmt.executeQuery(sql);
 		      
 		      
@@ -141,7 +146,7 @@ public class updateJSON extends HttpServlet {
 	      return ret;
 	}
 	
-private JSONArray getOnCallCrimeArray() throws SQLException, JSONException, IOException{
+private JSONArray getOnCallCrimeArray(String precinct) throws SQLException, JSONException, IOException{
 		
 		JSONArray ret = new JSONArray();
 		
@@ -153,11 +158,19 @@ private JSONArray getOnCallCrimeArray() throws SQLException, JSONException, IOEx
 		     System.out.println("GET CRIME ARRAY: Creating statement...");
 		     stmt = c.createStatement();
 		     String currentTime = "201608311000";
-		     String sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 1";
-		      ResultSet rs = stmt.executeQuery(sql);
+		     String sql;
+		     
+		     if(precinct == null) {
+		    	 sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 1";
+		    	 System.out.println("precinct was null");
+		     } else {
+		    	 sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 1";
+		     }
+		 
+		     ResultSet rs = stmt.executeQuery(sql);
 		      
 		      
-		      while(rs.next()) {
+		     while(rs.next()) {
 		    	  JSONObject oncall = new JSONObject();
 			      oncall.put("time-UTM", rs.getLong("Datetime"));
 			      oncall.put("Location", rs.getString("location"));
@@ -178,7 +191,7 @@ private JSONArray getOnCallCrimeArray() throws SQLException, JSONException, IOEx
 	      return ret;
 	}
 
-private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IOException{
+private JSONArray getHistoricCrimeArray(String precinct) throws SQLException, JSONException, IOException{
 	
 	JSONArray ret = new JSONArray();
 	
