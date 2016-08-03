@@ -106,22 +106,14 @@ public class updateJSON extends HttpServlet {
 		      JSONArray routeoptions = new JSONArray();
 		      JSONObject route1 = new JSONObject();
 		      route1.put("time-UTM", 1465832832);
-		      route1.put("Location", "Wedgewood Ave and 24th");
+		      route1.put("Location", "1010 Wedgewood Ave. Nashville, TN, 37203");
 		      route1.put("time to", 20);
 		      route1.put("distance to", 1.2);
 		      route1.put("route description", "A lot of activity near the liquor store. Watch out during peak hours of 1-4 pm");
 		      routeoptions.put(route1);
 		      json.put("route options", routeoptions);
 		      
-		      JSONArray patrols = new JSONArray();
-		      JSONObject patrol1 = new JSONObject();
-		      patrol1.put("ID", "35A");
-		      patrol1.put("Location", "Blair Ave.");
-		      patrol1.put("GPS lat", 36.144);
-		      patrol1.put("GPS long", -86.796);
-		      patrol1.put("distance to", 1.2);
-		      patrol1.put("Precinct", "Midtown Hills");
-		      patrols.put(patrol1);
+		      JSONArray patrols = getPatrolArray();
 		      json.put("Patrols", patrols);
 		      
 		      JSONArray oncall = new JSONArray();
@@ -158,6 +150,43 @@ public class updateJSON extends HttpServlet {
 		}
 		
 	}
+	
+	private JSONArray getPatrolArray() throws SQLException, JSONException, IOException{
+		
+		JSONArray ret = new JSONArray();
+		
+		Connection c = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
+		     System.out.println("GET PATROL ARRAY: Creating statement...");
+		     stmt = c.createStatement();
+		     String sql = "SELECT * FROM AVLData WHERE Datetime IN (SELECT MAX(Datetime) FROM AVLData GROUP BY CarID)";
+		      ResultSet rs = stmt.executeQuery(sql);
+		      
+		      
+		      while(rs.next()) {
+		    	  JSONObject patrol = new JSONObject();
+		    	  patrol.put("ID", rs.getString("CarID"));
+			      patrol.put("Location", "Blair Ave.");
+			      patrol.put("GPS lat", rs.getDouble("Lat"));
+			      patrol.put("GPS long", rs.getDouble("Long"));
+			      patrol.put("distance to", 1.2);
+			      patrol.put("Precinct", "Midtown Hills");
+			      ret.put(patrol);
+		      }
+		      
+		      stmt.close();
+			  c.close();
+		      rs.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	      return ret;
+	}
+	
 
 	protected void insertJSONData(HttpServletRequest request) throws Exception{
 		Connection c = null;
