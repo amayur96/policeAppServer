@@ -187,6 +187,43 @@ public class updateJSON extends HttpServlet {
 	      return ret;
 	}
 	
+private JSONArray getCrimeArray() throws SQLException, JSONException, IOException{
+		
+		JSONArray ret = new JSONArray();
+		
+		Connection c = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
+		     System.out.println("GET PATROL ARRAY: Creating statement...");
+		     stmt = c.createStatement();
+		     String sql = "SELECT * FROM AVLData WHERE Datetime IN (SELECT MAX(Datetime) FROM AVLData GROUP BY CarID)";
+		      ResultSet rs = stmt.executeQuery(sql);
+		      
+		      
+		      while(rs.next()) {
+		    	  JSONObject patrol = new JSONObject();
+		    	  patrol.put("ID", rs.getString("CarID"));
+			      patrol.put("Location", "Blair Ave.");
+			      patrol.put("GPS lat", rs.getDouble("Lat"));
+			      patrol.put("GPS long", rs.getDouble("Long"));
+			      patrol.put("distance to", 1.2);
+			      patrol.put("Precinct", "Midtown Hills");
+			      ret.put(patrol);
+		      }
+		      
+		      stmt.close();
+			  c.close();
+		      rs.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	      return ret;
+	}
+
+	
 
 	protected void insertJSONData(HttpServletRequest request) throws Exception{
 		Connection c = null;
