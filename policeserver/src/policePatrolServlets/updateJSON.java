@@ -117,7 +117,7 @@ public class updateJSON extends HttpServlet {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 		     System.out.println("GET PATROL ARRAY: Creating statement...");
 		     stmt = c.createStatement();
-		     String sql = "SELECT * FROM AVLData WHERE Datetime IN (SELECT MAX(Datetime) FROM AVLData GROUP BY CarID)";
+		     String sql = "SELECT * FROM police WHERE Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID)";
 		      ResultSet rs = stmt.executeQuery(sql);
 		      
 		      
@@ -128,7 +128,7 @@ public class updateJSON extends HttpServlet {
 			      patrol.put("GPS lat", rs.getDouble("Lat"));
 			      patrol.put("GPS long", rs.getDouble("Long"));
 			      patrol.put("distance to", 1.2);
-			      patrol.put("Precinct", "Midtown Hills");
+			      patrol.put("Precinct", rs.getString("PRECINCT"));
 			      ret.put(patrol);
 		      }
 		      
@@ -240,7 +240,7 @@ private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IO
 				String id = obj.getString("ID");
 				double lat = obj.getDouble("latitude");
 				double lng = obj.getDouble("longitude");
-				sql = "INSERT INTO `AVLData`(Datetime,CarID,Lat,Long) VALUES ('" + date + "','" + id + "','" + lat
+				sql = "INSERT INTO `police`(Datetime,CarID,Lat,Long) VALUES ('" + date + "','" + id + "','" + lat
 						+ "','" + lng + "')";
 				stmt = (Statement) c.createStatement();
 				stmt.executeUpdate(sql);
@@ -318,7 +318,7 @@ private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IO
 			System.out.println("CHECK TABLE EXISTS: Creating a connection...");
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			DatabaseMetaData md = c.getMetaData();
-			ResultSet res = md.getTables(null, null, "AVLData", null);
+			ResultSet res = md.getTables(null, null, "police", null);
 			if(res.next()) {
 				System.out.println("CHECK TABLE EXISTS: Table already exists");
 				System.out.println(
@@ -346,11 +346,13 @@ private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IO
 			Class.forName("org.sqlite.JDBC");
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			System.out.println("CREATE TABLE: Opened database successfully");
-			String sql = "CREATE TABLE AVLData " +
+			String sql = "CREATE TABLE police " +
 					"(Datetime TEXT NOT NULL, " +
 					" CarID TEXT NOT NULL, " +
 					" Lat REAL, " +
-					" Long REAL)";
+					" Long REAL, " +
+					" PRECINCT TEXT NOT NULL)";
+
 			stmt = (Statement) c.createStatement();
 			stmt.executeUpdate(sql);
 			stmt.close();
