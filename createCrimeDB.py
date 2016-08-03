@@ -20,8 +20,11 @@ def checkTableExists(dbcon, tableName):
 def createTable():
     c.execute('CREATE TABLE crime '
               '(datetime TEXT, location TEXT, description TEXT,'
-              'lat REAL, long REAL, precinct TEXT '
+              'lat REAL, long REAL, precinct TEXT, oncall INTEGER '
               ' )')
+
+# def dropTable(tableName):
+#     c.execute('DROP TABLE test.' + tableName)
 
 def makeTwoLetters(input):
     #prepend the string with '0' if it is of a
@@ -56,7 +59,13 @@ def readProcessCrimeData():
                 precinct = "South"
             else:
                 precinct = "North"
-            pastCrimeRecords.append([testDatetime,"Sample Location",description,lat,long,precinct])
+
+            if random.uniform(0, 1) > 0.85:
+                onCall = 1
+            else:
+                onCall = 0
+
+            pastCrimeRecords.append([testDatetime,"Sample Location",description,lat,long,precinct,onCall])
 
         except TypeError:
             print str(rowCounter) + " avoided in recentCrimeCentroids"
@@ -66,13 +75,15 @@ def readProcessCrimeData():
 
 def insertData():
     for input in inputList:
-        c.execute('insert into crime values (?,?,?,?,?,?)', input)
+        c.execute('insert into crime values (?,?,?,?,?,?,?)', input)
     conn.commit()
 
 dbFileName = "/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db"
 
 conn = sqlite3.connect(dbFileName)
 c = conn.cursor()
+
+# dropTable("crime")
 
 #check if the crime table exists
 if not checkTableExists(conn,"crime"):
