@@ -198,7 +198,8 @@ private JSONArray getCrimeArray() throws SQLException, JSONException, IOExceptio
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 		     System.out.println("GET PATROL ARRAY: Creating statement...");
 		     stmt = c.createStatement();
-		     String sql = "SELECT * FROM AVLData WHERE Datetime IN (SELECT MAX(Datetime) FROM AVLData GROUP BY CarID)";
+		     String currentTime = 201608311000
+		     String sql = "SELECT * FROM crime WHERE datetime >=" + currentTime;
 		      ResultSet rs = stmt.executeQuery(sql);
 		      
 		      
