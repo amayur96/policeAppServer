@@ -60,45 +60,20 @@ public class updateJSON extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	
-	protected void sendJSON(HttpServletResponse response) throws SQLException, JSONException, IOException
+	protected void sendJSON(HttpServletResponse response, String precinct) throws SQLException, JSONException, IOException
 	{
+		if(precinct == null) {
+			// no precinct specified. Default should be to return all data.
+		}
+		
 		Connection c = null;
 		Statement stmt = null;
 		try {
-			Class.forName("org.sqlite.JDBC");
-			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 		     System.out.println("SEND JSON: Creating statement...");
-		     stmt = c.createStatement();
-		     String sql = "SELECT Datetime, CarID, Lat, Long FROM AVLData";
-		      ResultSet rs = stmt.executeQuery(sql);
 		      //STEP 5: Extract data from result set
 		      
-		      //--------------------------------------------
-		      //TODO: Fix this to return the correct thing.
-		      //For right now just hardcode the response. 
 		      JSONObject json = new JSONObject();
-		      /*JsonArray policeCars = new JsonArray();
-		      JSONObject policeData;
-		      while(rs.next()){
-		         //Retrieve by column name
-		    	 policeData = new JSONObject();
-		         String date  = rs.getString("Datetime");
-		         String carID = rs.getString("CarID");
-		         double lat = rs.getDouble("Lat");
-		         double lng = rs.getDouble("Long");
-		         //Display values
-		         System.out.print("Date: " + date);
-		         System.out.print(", CarID: " + carID);
-		         System.out.print(", Lat: " + lat);
-		         System.out.println(", Lng: " + lng);
-		         policeData.put("Date:",date);
-		         policeData.put("CarID", carID);
-		         policeData.put("Latitude", lat);
-		         policeData.put("Longitude", lng);
-		         policeCars.add(policeData.toString());
-		      }
-		      json.put("Police", policeCars);*/
-		      
+		     
 		      json.put("firstName", "John");
 		      json.put("lastName", "Smith");
 		      json.put("ID", "32A");
@@ -121,14 +96,10 @@ public class updateJSON extends HttpServlet {
 		      
 		      JSONArray historic = getHistoricCrimeArray();
 		      json.put("Historic Crimes", historic);
-		      
 		      //------------------------------------------
 		      response.setContentType("application/json");
 		      response.getWriter().write(json.toString());
-		      stmt.close();
-			  c.close();
-		      rs.close();
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -285,7 +256,7 @@ private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IO
 		}
 	}
 	
-	public void getPrecinct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public String getPrecinct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String paramName = "precinct";
 		String paramValue = request.getParameter(paramName);
 		
@@ -294,13 +265,14 @@ private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IO
 		} else {
 			System.out.println("Precinct is: " + paramValue);
 		}
+		return paramValue;
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		try {
-			getPrecinct(request,response);
-			sendJSON(response);
+			String precinct = getPrecinct(request,response);
+			sendJSON(response, precinct);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
