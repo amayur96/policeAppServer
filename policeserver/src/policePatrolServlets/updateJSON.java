@@ -164,7 +164,7 @@ private JSONArray getOnCallCrimeArray(String precinct) throws SQLException, JSON
 		    	 sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 1";
 		    	 System.out.println("precinct was null");
 		     } else {
-		    	 sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 1";
+		    	 sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 1" + " AND PRECINCT = '" + precinct + "'";
 		     }
 		 
 		     ResultSet rs = stmt.executeQuery(sql);
@@ -203,7 +203,14 @@ private JSONArray getHistoricCrimeArray(String precinct) throws SQLException, JS
 	     System.out.println("GET CRIME ARRAY: Creating statement...");
 	     stmt = c.createStatement();
 	     String currentTime = "201608311000";
-	     String sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 0";
+	     String sql;
+	     
+	     if(precinct == null) {
+	    	 sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 0";
+	    	 System.out.println("precinct was null");
+	     } else {
+	    	 sql = "SELECT * FROM crime WHERE datetime >= " + currentTime + " AND oncall = 0" + " AND PRECINCT = '" + precinct + "'";
+	     }
 	      ResultSet rs = stmt.executeQuery(sql);
 	      
 	      
