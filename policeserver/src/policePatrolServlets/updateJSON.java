@@ -284,10 +284,22 @@ private JSONArray getHistoricCrimeArray() throws SQLException, JSONException, IO
 			System.exit(0);
 		}
 	}
+	
+	public void getPrecinct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String paramName = "precinct";
+		String paramValue = request.getParameter(paramName);
+		
+		if(paramValue==null) {
+			System.out.println("No precinct value found");
+		} else {
+			System.out.println("Precinct is: " + paramValue);
+		}
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		try {
+			getPrecinct(request,response);
 			sendJSON(response);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
