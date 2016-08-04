@@ -15,8 +15,8 @@ import policePatrolServlets.updateJSON.PoliceDataHolder;
 
 public class AssignmentsTest {
 	
-	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
-	
+	//private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
+	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db";
 	
 	public class CrimeDataHolder {
 		double datetime;
@@ -171,12 +171,15 @@ public class AssignmentsTest {
 		int targets[] = new int[dist.length];
 		// once we find a police for a crime, take that crime out of the rest of
 		// the problem
-		Boolean crimeLeft[] = new Boolean[dist[0].length];
+		Boolean crimeLeft[] = new Boolean[dist[0].length];		
 		Boolean policeLeft[] = new Boolean[dist.length];
-
-		min = dist[0][0];
+		//initialize the arrays
+		Arrays.fill(crimeLeft, Boolean.TRUE);
+		Arrays.fill(policeLeft, Boolean.TRUE);
+		
 		// till crimes are left
 		while (Arrays.asList(crimeLeft).contains(true)) {
+			min = Double.MAX_VALUE;
 			// iterate through rows: police
 			for (int i = 0; i < dist.length; i++) {
 				// if the police is still available
@@ -230,9 +233,13 @@ public class AssignmentsTest {
 				assignments.put(policeCurr.get(counter).carID, tempLatLong);
 				
 			}
+			//test output
+			for (String key : assignments.keySet()) {
+			    System.out.println("Key: " + key + ", Value: " + assignments.get(key));
+			}			
 			
-			
-		}
+		}		
+		
 		 catch (SQLException e) {
 				e.printStackTrace();
 			}
