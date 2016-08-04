@@ -35,8 +35,8 @@ import org.json.JSONObject;
 @WebServlet("/updateJSON")
 public class updateJSON extends HttpServlet {
 	// change this to your location.
-	//private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
-	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db";
+	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
+	//private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
