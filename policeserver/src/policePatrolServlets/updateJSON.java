@@ -525,7 +525,7 @@ public class updateJSON extends HttpServlet {
 	public double[][] getDistanceMatrix(ArrayList<PoliceDataHolder> policeCurr,
 			ArrayList<CrimeDataHolder> crimesCurr) {
 		int numPolice = policeCurr.size();
-		int numCrimes = crimesCurr.size()
+		int numCrimes = crimesCurr.size();
 		double[][] distanceMatrix = new double[numPolice][numCrimes];
 		double distTemp;
 		int counterPolice = 0;
