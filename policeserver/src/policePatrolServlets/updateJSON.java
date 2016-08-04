@@ -80,7 +80,7 @@ public class updateJSON extends HttpServlet {
 
 			JSONArray routeoptions = new JSONArray();
 			JSONObject route1 = new JSONObject();
-			route1.put("time-UTM", 1465832832);
+			route1.put("datetime", 1465832832);
 			route1.put("Location", "1010 Wedgewood Ave. Nashville, TN, 37203");
 			route1.put("time to", 20);
 			route1.put("distance to", 1.2);
@@ -181,7 +181,7 @@ public class updateJSON extends HttpServlet {
 
 			while (rs.next()) {
 				JSONObject oncall = new JSONObject();
-				oncall.put("time-UTM", rs.getLong("Datetime"));
+				oncall.put("datetime", rs.getString("Datetime"));
 				oncall.put("Location", rs.getString("location"));
 				oncall.put("Description", rs.getString("description"));
 				oncall.put("GPS lat", rs.getDouble("lat"));
@@ -231,7 +231,7 @@ public class updateJSON extends HttpServlet {
 
 			while (rs.next()) {
 				JSONObject historic = new JSONObject();
-				historic.put("time-UTM", rs.getLong("Datetime"));
+				historic.put("datetime", rs.getString("Datetime"));
 				historic.put("Location", rs.getString("location"));
 				historic.put("Description", rs.getString("description"));
 				historic.put("GPS lat", rs.getDouble("lat"));
