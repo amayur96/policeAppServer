@@ -35,8 +35,8 @@ import org.json.JSONObject;
 @WebServlet("/updateJSON")
 public class updateJSON extends HttpServlet {
 	// change this to your location.
-	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
-
+	//private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
+	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -525,7 +525,7 @@ public class updateJSON extends HttpServlet {
 	public double[][] getDistanceMatrix(ArrayList<PoliceDataHolder> policeCurr,
 			ArrayList<CrimeDataHolder> crimesCurr) {
 		int numPolice = policeCurr.size();
-		int numCrimes = crimesCurr.size()
+		int numCrimes = crimesCurr.size();
 		double[][] distanceMatrix = new double[numPolice][numCrimes];
 		double distTemp;
 		int counterPolice = 0;
