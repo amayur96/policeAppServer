@@ -162,7 +162,7 @@ public class updateJSON extends HttpServlet {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
-			System.out.println("GET CRIME ARRAY: Creating statement...");
+			System.out.println("GET ONCALLCRIME ARRAY: Creating statement...");
 			stmt = c.createStatement();
 			String currentTime = "201608311000";
 			String sql;
@@ -213,7 +213,7 @@ public class updateJSON extends HttpServlet {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
-			System.out.println("GET CRIME ARRAY: Creating statement...");
+			System.out.println("GET HISTORICCRIME ARRAY: Creating statement...");
 			stmt = c.createStatement();
 			String currentTime = "201608311000";
 			String sql;
