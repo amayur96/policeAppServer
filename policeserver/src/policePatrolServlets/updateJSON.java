@@ -309,12 +309,27 @@ public class updateJSON extends HttpServlet {
 		}
 		return paramValue;
 	}
+	
+	public String getID(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		String paramName = "ID";
+		String paramValue = request.getParameter(paramName);
+		
+		if (paramValue == null) {
+			System.out.println("No ID value found");
+		} else {
+			System.out.println("ID is: " + paramValue);
+		}
+		return paramValue;
+		
+	}
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
 		try {
 			String precinct = getPrecinct(request, response);
+			String ID = getID(request, response);
 			sendJSON(response, precinct);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
