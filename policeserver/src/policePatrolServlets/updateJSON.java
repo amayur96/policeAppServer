@@ -29,6 +29,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import policePatrolServlets.AssignmentsTest.CrimeDataHolder;
+import policePatrolServlets.AssignmentsTest.PoliceDataHolder;
+
 /**
  * Servlet implementation class updateJSON
  */
@@ -447,7 +450,7 @@ public class updateJSON extends HttpServlet {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			System.out.println("GET PATROL ARRAY: Creating statement...");
 			stmt = c.createStatement();
-			String sql = "SELECT * FROM crime WHERE oncall = 1";
+			String sql = "SELECT * FROM crimeAssignmentTest WHERE oncall = 1";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			// iterate through results set and store in holder
@@ -482,7 +485,9 @@ public class updateJSON extends HttpServlet {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			System.out.println("GET PATROL ARRAY: Creating statement...");
 			stmt = c.createStatement();
-			String sql = "SELECT * FROM AVLData WHERE Datetime IN (SELECT MAX(Datetime) FROM AVLData GROUP BY CarID)";
+			String sql = "SELECT t1.* FROM police AS t1 "
+					+ "JOIN (SELECT CarID, MAX(Datetime) Datetime FROM police GROUP BY CarID) AS t2 "
+					+ "ON t1.Datetime = t2.Datetime AND t1.CarID = t2.CarID";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			// iterate through results set and store in holder
@@ -494,6 +499,8 @@ public class updateJSON extends HttpServlet {
 				policeTemp.long_ = rs.getDouble("long");
 
 				policeCurr.add(policeTemp);
+				
+				System.out.println(policeTemp.carID + " at " + policeTemp.lat_ + ", " + policeTemp.long_);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -541,11 +548,14 @@ public class updateJSON extends HttpServlet {
 			ArrayList<CrimeDataHolder> crimesCurr) {
 		int numPolice = policeCurr.size();
 		int numCrimes = crimesCurr.size();
+		System.out.println("number of police " + numPolice);
+		System.out.println("number of crimes " + numCrimes);
 		double[][] distanceMatrix = new double[numPolice][numCrimes];
 		double distTemp;
 		int counterPolice = 0;
 		int counterCrime = 0;
 		for (PoliceDataHolder policeTemp : policeCurr) {
+			counterCrime = 0;
 			for (CrimeDataHolder crimeTemp : crimesCurr) {
 				distTemp = distance(policeTemp.lat_, crimeTemp.lat_,
 						policeTemp.long_, crimeTemp.long_, 0, 0);
@@ -568,7 +578,7 @@ public class updateJSON extends HttpServlet {
 		// once we find a police for a crime, take that crime out of the rest of
 		// the problem
 		Boolean crimeLeft[] = new Boolean[dist[0].length];		
-		Boolean policeLeft[] = new Boolean[dist[0].length];
+		Boolean policeLeft[] = new Boolean[dist.length];
 		//initialize the arrays
 		Arrays.fill(crimeLeft, Boolean.TRUE);
 		Arrays.fill(policeLeft, Boolean.TRUE);
@@ -629,9 +639,13 @@ public class updateJSON extends HttpServlet {
 				assignments.put(policeCurr.get(counter).carID, tempLatLong);
 				
 			}
+			//test output
+			for (String key : assignments.keySet()) {
+			    System.out.println("Key: " + key + ", Value: " + assignments.get(key));
+			}			
 			
-			
-		}
+		}		
+		
 		 catch (SQLException e) {
 				e.printStackTrace();
 			}

@@ -82,7 +82,9 @@ public class AssignmentsTest {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			System.out.println("GET PATROL ARRAY: Creating statement...");
 			stmt = c.createStatement();
-			String sql = "SELECT * FROM police WHERE Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID) GROUP BY CarID";
+			String sql = "SELECT t1.* FROM police AS t1 "
+					+ "JOIN (SELECT CarID, MAX(Datetime) Datetime FROM police GROUP BY CarID) AS t2 "
+					+ "ON t1.Datetime = t2.Datetime AND t1.CarID = t2.CarID";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			// iterate through results set and store in holder
