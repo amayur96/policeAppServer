@@ -81,7 +81,7 @@ public class updateJSON extends HttpServlet {
 			json.put("lastName", "Smith");
 			json.put("ID", ID);
 
-			JSONArray routeoptions = getRoute(ID);
+			JSONArray routeoptions = getRoute(precinct, ID);
 			
 			json.put("route options", routeoptions);
 
@@ -103,15 +103,22 @@ public class updateJSON extends HttpServlet {
 
 	}
 	
-	private JSONArray getRoute(String ID) throws SQLException,
+	private JSONArray getRoute(String precinct, String ID) throws SQLException,
 			JSONException, IOException {
 		
 		JSONArray ret = new JSONArray();
 		
+		if(precinct == null) {
+			// no precinct specified
+			return ret;
+		}
+		
 		Connection c = null;
 		Statement stmt = null;
 		try {
-			HashMap<String, double[]> assignments = getPoliceAssignments();
+			HashMap<String, double[]> assignments = getPoliceAssignments(precinct);
+			
+			if(assignments == null) return null;
 			double latlong[] = new double[2];
 			
 			if(assignments.containsKey(ID)) {
@@ -471,7 +478,7 @@ public class updateJSON extends HttpServlet {
 	}
 
 	// Method to get current crimes on call
-	protected ArrayList<CrimeDataHolder> getCurrentOnCallCrimes()
+	protected ArrayList<CrimeDataHolder> getCurrentOnCallCrimes(String precinct)
 			throws SQLException {
 		// create data holder
 		ArrayList<CrimeDataHolder> crimesOnCall = new ArrayList<CrimeDataHolder>();
@@ -483,7 +490,8 @@ public class updateJSON extends HttpServlet {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			System.out.println("GET CRIME ARRAY: Creating statement...");
 			stmt = c.createStatement();
-			String sql = "SELECT * FROM crimeAssignmentTest WHERE oncall = 1";
+			String sql = "SELECT * FROM crimeAssignmentTest "
+					+ "WHERE oncall = 1 AND PRECINCT = '" + precinct + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 
 			// iterate through results set and store in holder
@@ -506,7 +514,7 @@ public class updateJSON extends HttpServlet {
 	}
 
 	// Method to get current police placements
-	protected ArrayList<PoliceDataHolder> getCurrentPolice()
+	protected ArrayList<PoliceDataHolder> getCurrentPolice(String precinct)
 			throws SQLException {
 		// create data holder
 		ArrayList<PoliceDataHolder> policeCurr = new ArrayList<PoliceDataHolder>();
@@ -520,7 +528,8 @@ public class updateJSON extends HttpServlet {
 			stmt = c.createStatement();
 			String sql = "SELECT t1.* FROM police AS t1 "
 					+ "JOIN (SELECT CarID, MAX(Datetime) Datetime FROM police GROUP BY CarID) AS t2 "
-					+ "ON t1.Datetime = t2.Datetime AND t1.CarID = t2.CarID";
+					+ "ON t1.Datetime = t2.Datetime AND t1.CarID = t2.CarID"
+					+ " WHERE PRECINCT = '" + precinct + "'";;
 			ResultSet rs = stmt.executeQuery(sql);
 
 			// iterate through results set and store in holder
@@ -648,22 +657,28 @@ public class updateJSON extends HttpServlet {
 	// method to solve Transportation Problem
 	// get current Crimes on call, current police placements and return optimal
 	// police placements
-	protected HashMap<String,double[]> getPoliceAssignments() {
+	protected HashMap<String,double[]> getPoliceAssignments(String precinct) {
 		int[] targets = new int[0];
 		HashMap<String,double[]> assignments = new HashMap<String,double[]>();
 		try {
 			// fetch current police positions
-			ArrayList<PoliceDataHolder> policeCurr = getCurrentPolice();
+			ArrayList<PoliceDataHolder> policeCurr = getCurrentPolice(precinct);
 			// fetch crimes that need to be responded to
-			ArrayList<CrimeDataHolder> crimesCurr = getCurrentOnCallCrimes();
+			ArrayList<CrimeDataHolder> crimesCurr = getCurrentOnCallCrimes(precinct);
 			// calculate distances between the police points and crime points
 			// we always treat that we have sufficient police to respond to
 			// crimes
+			
+			if(crimesCurr.size() == 0)
+				return null;
+			
 			double[][] distMatrix = getDistanceMatrix(policeCurr, crimesCurr);
 			// get assignments for each crime and police
 			targets = heuristicSolveTransport(distMatrix);		
-
 			//define new hash map: key(carID),value(lat long)
+			
+			if(targets.length == 0)
+				return null;
 			
 			double[] tempLatLong;
 			for (int counter = 0;counter<policeCurr.size();counter++)
