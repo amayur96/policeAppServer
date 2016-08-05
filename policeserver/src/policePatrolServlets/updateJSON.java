@@ -549,15 +549,18 @@ public class updateJSON extends HttpServlet {
 		int minDistPolice = 0;
 		int minDistCrime = 0;
 		// for each police, mark the index of the target that it should go to
-		int targets[] = new int[dist[0].length];
+		int targets[] = new int[dist.length];
 		// once we find a police for a crime, take that crime out of the rest of
 		// the problem
-		Boolean crimeLeft[] = new Boolean[dist[0].length];
+		Boolean crimeLeft[] = new Boolean[dist[0].length];		
 		Boolean policeLeft[] = new Boolean[dist[0].length];
-
-		min = dist[0][0];
+		//initialize the arrays
+		Arrays.fill(crimeLeft, Boolean.TRUE);
+		Arrays.fill(policeLeft, Boolean.TRUE);
+		
 		// till crimes are left
 		while (Arrays.asList(crimeLeft).contains(true)) {
+			min = Double.MAX_VALUE;
 			// iterate through rows: police
 			for (int i = 0; i < dist.length; i++) {
 				// if the police is still available
