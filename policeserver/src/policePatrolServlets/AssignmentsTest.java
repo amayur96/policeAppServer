@@ -15,8 +15,8 @@ import policePatrolServlets.updateJSON.PoliceDataHolder;
 
 public class AssignmentsTest {
 	
-	//private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
-	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db";
+	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
+	//private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db";
 	
 	public class CrimeDataHolder {
 		double datetime;
@@ -94,6 +94,8 @@ public class AssignmentsTest {
 				policeTemp.long_ = rs.getDouble("long");
 
 				policeCurr.add(policeTemp);
+				
+				System.out.println(policeTemp.carID + " at " + policeTemp.lat_ + ", " + policeTemp.long_);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -150,7 +152,6 @@ public class AssignmentsTest {
 		for (PoliceDataHolder policeTemp : policeCurr) {
 			counterCrime = 0;
 			for (CrimeDataHolder crimeTemp : crimesCurr) {
-				System.out.println("added distance to array index " + counterPolice + " " + counterCrime);
 				distTemp = distance(policeTemp.lat_, crimeTemp.lat_,
 						policeTemp.long_, crimeTemp.long_, 0, 0);
 				distanceMatrix[counterPolice][counterCrime] = distTemp;
@@ -255,7 +256,7 @@ public class AssignmentsTest {
 			double lat = entry.getValue()[0];
 			double longg = entry.getValue()[1];
 			
-			System.out.println("Police car ID: " + key + " goes to lat " + lat + " long " + longg);
+			System.out.println("Police car ID: " + key + " goes to " + lat + ", " + longg);
 		}
 	}
 
