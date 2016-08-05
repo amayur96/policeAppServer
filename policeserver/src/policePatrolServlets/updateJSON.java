@@ -66,7 +66,7 @@ public class updateJSON extends HttpServlet {
 	 *      response)
 	 */
 
-	protected void sendJSON(HttpServletResponse response, String precinct)
+	protected void sendJSON(HttpServletResponse response, String precinct, String ID)
 			throws SQLException, JSONException, IOException {
 
 		Connection c = null;
@@ -79,18 +79,10 @@ public class updateJSON extends HttpServlet {
 
 			json.put("firstName", "John");
 			json.put("lastName", "Smith");
-			json.put("ID", "32A");
+			json.put("ID", ID);
 
-			JSONArray routeoptions = new JSONArray();
-			JSONObject route1 = new JSONObject();
-			route1.put("datetime", "201608311000");
-			route1.put("Location", "1010 Wedgewood Ave. Nashville, TN, 37203");
-			route1.put("time to", 20);
-			route1.put("distance to", 1.2);
-			route1.put(
-					"route description",
-					"A lot of activity near the liquor store. Watch out during peak hours of 1-4 pm");
-			routeoptions.put(route1);
+			JSONArray routeoptions = getRoute(ID);
+			
 			json.put("route options", routeoptions);
 
 			JSONArray patrols = getPatrolArray(precinct);
@@ -110,6 +102,44 @@ public class updateJSON extends HttpServlet {
 		}
 
 	}
+	
+	private JSONArray getRoute(String ID) throws SQLException,
+			JSONException, IOException {
+		
+		JSONArray ret = new JSONArray();
+		
+		Connection c = null;
+		Statement stmt = null;
+		try {
+			HashMap<String, double[]> assignments = getPoliceAssignments();
+			double latlong[] = new double[2];
+			
+			if(assignments.containsKey(ID)) {
+				latlong = assignments.get(ID);
+			} else {
+				latlong[0] = 36.1627;
+				latlong[1] = -86.7816;
+			}
+			
+			JSONObject route1 = new JSONObject();
+			route1.put("datetime", "201608311000");
+			route1.put("Location", "1010 Wedgewood Ave. Nashville, TN, 37203");
+			route1.put("time to", 20);
+			route1.put("distance to", 1.2);
+			route1.put("lat", latlong[0]);
+			route1.put("long", latlong[1]);
+			route1.put(
+					"route description",
+					"A lot of activity near the liquor store. Watch out during peak hours of 1-4 pm");
+			ret.put(route1);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ret;
+	}
 
 	private JSONArray getPatrolArray(String precinct) throws SQLException,
 			JSONException, IOException {
@@ -125,12 +155,15 @@ public class updateJSON extends HttpServlet {
 			stmt = c.createStatement();
 			String sql;
 			if (precinct == null) {
-				sql = "SELECT * FROM police WHERE Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID) GROUP BY CarID";
+				sql = "SELECT t1.* FROM police AS t1 "
+						+ "JOIN (SELECT CarID, MAX(Datetime) Datetime FROM police GROUP BY CarID) AS t2 "
+						+ "ON t1.Datetime = t2.Datetime AND t1.CarID = t2.CarID";
 				System.out.println("precinct was null");
 			} else {
-				sql = "SELECT * FROM police WHERE PRECINCT = '"
-						+ precinct
-						+ "' AND Datetime IN (SELECT MAX(Datetime) FROM police GROUP BY CarID) GROUP BY CarID";
+				sql = "SELECT t1.* FROM police AS t1 "
+						+ "JOIN (SELECT CarID, MAX(Datetime) Datetime FROM police GROUP BY CarID) AS t2 "
+						+ "ON t1.Datetime = t2.Datetime AND t1.CarID = t2.CarID "
+						+ "WHERE PRECINCT = '" + precinct + "'";
 			}
 
 			ResultSet rs = stmt.executeQuery(sql);
@@ -333,7 +366,7 @@ public class updateJSON extends HttpServlet {
 		try {
 			String precinct = getPrecinct(request, response);
 			String ID = getID(request, response);
-			sendJSON(response, precinct);
+			sendJSON(response, precinct, ID);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -448,7 +481,7 @@ public class updateJSON extends HttpServlet {
 			// fetch data from db
 			Class.forName("org.sqlite.JDBC");
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
-			System.out.println("GET PATROL ARRAY: Creating statement...");
+			System.out.println("GET CRIME ARRAY: Creating statement...");
 			stmt = c.createStatement();
 			String sql = "SELECT * FROM crimeAssignmentTest WHERE oncall = 1";
 			ResultSet rs = stmt.executeQuery(sql);
