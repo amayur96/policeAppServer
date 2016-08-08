@@ -15,6 +15,7 @@ import policePatrolServlets.updateJSON.PoliceDataHolder;
 
 public class AssignmentsTest {
 	
+	// point this to wherever the test database is located on your computer
 	private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/genexli/Documents/policeAppServer/Databases/test.db";
 	//private static final String DATABASE_LOCATION = "jdbc:sqlite:/Users/ayanmukhopadhyay/Documents/workspace/policeAppServer/policeAppServer/Databases/test.db";
 	
