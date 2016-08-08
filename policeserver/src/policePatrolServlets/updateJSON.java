@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.ServletContext;
@@ -690,7 +691,15 @@ public class updateJSON extends HttpServlet {
 			//test output
 			for (String key : assignments.keySet()) {
 			    System.out.println("Key: " + key + ", Value: " + assignments.get(key));
-			}			
+			}	
+			
+			for(Map.Entry<String, double[]> entry : assignments.entrySet()) {
+				String key = entry.getKey();
+				double lat = entry.getValue()[0];
+				double longg = entry.getValue()[1];
+				
+				System.out.println("Police car ID: " + key + " goes to " + lat + ", " + longg);
+			}
 			
 		}		
 		
