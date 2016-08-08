@@ -118,7 +118,7 @@ public class updateJSON extends HttpServlet {
 		try {
 			HashMap<String, double[]> assignments = getPoliceAssignments(precinct);
 			
-			if(assignments == null) return null;
+			if(assignments == null) return ret;
 			double latlong[] = new double[2];
 			
 			if(assignments.containsKey(ID)) {
