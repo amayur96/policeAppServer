@@ -125,8 +125,7 @@ public class updateJSON extends HttpServlet {
 			if(assignments.containsKey(ID)) {
 				latlong = assignments.get(ID);
 			} else {
-				latlong[0] = 36.1627;
-				latlong[1] = -86.7816;
+				return ret;
 			}
 			
 			JSONObject route1 = new JSONObject();
@@ -212,12 +211,10 @@ public class updateJSON extends HttpServlet {
 			String sql;
 
 			if (precinct == null) {
-				sql = "SELECT * FROM crime WHERE datetime >= " + currentTime
-						+ " AND oncall = 1";
+				sql = "SELECT * FROM crimeTest WHERE oncall = 1";
 				System.out.println("precinct was null");
 			} else {
-				sql = "SELECT * FROM crime WHERE datetime >= " + currentTime
-						+ " AND oncall = 1" + " AND PRECINCT = '" + precinct
+				sql = "SELECT * FROM crimeTest WHERE oncall = 1" + " AND PRECINCT = '" + precinct
 						+ "'";
 			}
 
@@ -263,12 +260,10 @@ public class updateJSON extends HttpServlet {
 			String sql;
 
 			if (precinct == null) {
-				sql = "SELECT * FROM crime WHERE datetime >= " + currentTime
-						+ " AND oncall = 0";
+				sql = "SELECT * FROM crimeTest WHERE oncall = 0";
 				System.out.println("precinct was null");
 			} else {
-				sql = "SELECT * FROM crime WHERE datetime >= " + currentTime
-						+ " AND oncall = 0" + " AND PRECINCT = '" + precinct
+				sql = "SELECT * FROM crimeTest WHERE oncall = 0" + " AND PRECINCT = '" + precinct
 						+ "'";
 			}
 			ResultSet rs = stmt.executeQuery(sql);
@@ -491,7 +486,7 @@ public class updateJSON extends HttpServlet {
 			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
 			System.out.println("GET CRIME ARRAY: Creating statement...");
 			stmt = c.createStatement();
-			String sql = "SELECT * FROM crimeAssignmentTest "
+			String sql = "SELECT * FROM crimeTest "
 					+ "WHERE oncall = 1 AND PRECINCT = '" + precinct + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 
