@@ -94,6 +94,10 @@ public class updateJSON extends HttpServlet {
 
 			JSONArray historic = getHistoricCrimeArray(precinct);
 			json.put("Historic Crimes", historic);
+			
+			JSONArray heatmap = getHeatmap(precinct);
+			json.put("Heatmap", heatmap);
+			
 			// ------------------------------------------
 			response.setContentType("application/json");
 			response.getWriter().write(json.toString());
@@ -102,6 +106,48 @@ public class updateJSON extends HttpServlet {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private JSONArray getHeatmap(String precinct) throws SQLException,
+			JSONException, IOException {
+		
+		JSONArray ret = new JSONArray();
+		Connection c = null;
+		Statement stmt = null;
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = (Connection) DriverManager.getConnection(DATABASE_LOCATION);
+			System.out.println("GET HEATMAP ARRAY: Creating statement...");
+			stmt = c.createStatement();
+			String sql;
+			if (precinct == null) {
+				sql = "SELECT * FROM heatmap";
+				System.out.println("precinct was null");
+			} else {
+				sql = "SELECT * FROM heatmap "
+						+ "WHERE PRECINCT = '" + precinct + "'";
+			}
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+				JSONObject weightedlatlong = new JSONObject();
+
+				weightedlatlong.put("GPS lat", rs.getDouble("Lat"));
+				weightedlatlong.put("GPS long", rs.getDouble("Long"));
+				weightedlatlong.put("weight", rs.getString("Weight"));
+				weightedlatlong.put("Precinct", rs.getString("PRECINCT"));
+				ret.put(weightedlatlong);
+			}
+
+			stmt.close();
+			c.close();
+			rs.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ret;
 	}
 	
 	private JSONArray getRoute(String precinct, String ID) throws SQLException,
@@ -260,11 +306,11 @@ public class updateJSON extends HttpServlet {
 			String sql;
 
 			if (precinct == null) {
-				sql = "SELECT * FROM crimeTest WHERE oncall = 0";
+				sql = "SELECT * FROM crimeTest WHERE oncall = 0 LIMIT 100";
 				System.out.println("precinct was null");
 			} else {
 				sql = "SELECT * FROM crimeTest WHERE oncall = 0" + " AND PRECINCT = '" + precinct
-						+ "'";
+						+ "' LIMIT 100";
 			}
 			ResultSet rs = stmt.executeQuery(sql);
 
