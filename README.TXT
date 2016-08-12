@@ -27,6 +27,8 @@ At this point you’ll have two projects and a few errors. To add Apache Tomcat 
 
 Now right click on policeserver in your project explorer, click on java-json.jar and edit it. Point it to the right location which should be inside your cloned repo. Same thing with the mysql connector.
 
+To view the database, download SQLiteStudio.
+
 If I forgot any steps and it didn’t work, just email me.
 
 ———————————————
