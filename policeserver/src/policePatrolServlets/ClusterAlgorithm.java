@@ -12,9 +12,16 @@ import java.util.ArrayList;
 public class ClusterAlgorithm {
 	public ArrayList<Cluster> clusters;
 	public ArrayList<Double> iterLikelihood;
-
-	public static void main(String[] args) {
+	public Grid[] grids;
+	public int NUM_GRIDS;
+	
+	public ClusterAlgorithm() {
+		clusters = new ArrayList<Cluster>();
+		iterLikelihood = new ArrayList<Double>();
+		grids = new Grid[900];
 		
+	}
+	public void readData() {
 		String csvFile = "/Users/genexli/Documents/CrimeDataAnalysis/survAnalysisRows1mileNoCensoringHierarchical_robbery_1_2_4_1.csv";
         String line = "";
         String cvsSplitBy = ",";
@@ -30,64 +37,52 @@ public class ClusterAlgorithm {
             	}
         	}
         	
-        	Grid[] grids = new Grid[900];
-        	
             while ((line = br.readLine()) != null) {
 
                 // use comma as separator
                 String[] crimeDataPoint = line.split(cvsSplitBy);
-                // get the grid number                
-                String gridNumberString = crimeDataPoint[0].substring(1, crimeDataPoint[0].length()-1);
-                int gridNumber = (int) Double.parseDouble(gridNumberString);
+                // get the grid number
                 
+                for(int i = 0; i < crimeDataPoint.length; i++) {
+        			System.out.print(crimeDataPoint[i] + " ");
+        		}
+                System.out.println();
+                
+                int gridNumber = Integer.parseInt(crimeDataPoint[0]);
                 // if null, instantiate a new grid.
-                if(grids[gridNumber] == null) grids[gridNumber] = new Grid();
+                if(grids[gridNumber] == null) grids[gridNumber] = new Grid(gridNumber);
                 // put data in grid.
                 grids[gridNumber].addData(crimeDataPoint);
             }
             
-            int NUM_GRIDS = 0;
+            NUM_GRIDS = 0;
             
             for(int i = 0; i < grids.length; i++) {
-            	if(grids[i] != null) NUM_GRIDS++;
+            	if(grids[i] != null) {
+            		NUM_GRIDS++;
+            		
+            		Cluster c = new Cluster();
+                	c.put(grids[i]);
+                	// c.calculate() alpha vector
+        			c.calculateAlpha();
+        			// c.calculate likelihood.
+        			c.calculatelogL(); 
+                	
+            	}
             }
             System.out.println("number of distinct grids is: " + NUM_GRIDS);
             
         }catch (IOException e) {
             e.printStackTrace();
         }
-        
-        /*
-
-		// initalize the cluster list.
-		clusters = new ArrayList<Cluster>();
-		// initialize each grid with grid number, training set matrix, test set matrix.
-		for(int i = 0; i < NUM_GRIDS; i++) {
-			// read in information from CSV file. 
-
-			Grid g = new Grid();
-			// put in grid number
-			g.gridNumber = ;
-			// put in training set matrix
-			double[][] training = new double[][];
-			g.trainingSet = training;
-			// put in test set matrix.
-			double[][] test = new double[][];
-			g.testSet =  test;
-			// put in static feature set
-			double[] staticF = new double[];
-			g.staticFeatures = staticF;
-
-			Cluster c = new Cluster();
-			// put g into c.
-			c.put(g);
-			// c.calculate() alpha vector
-			c.calculateAlpha();
-			// c.calculate likelihood.
-			c.calculatelogL(); 
-			// put c into arraylist of clusters.
-			clusters.add(c);
-		}
+	}
+	
+	public static void main(String[] args) {
+		ClusterAlgorithm ca = new ClusterAlgorithm();
+		
+		ca.readData();
+		
+		/*
 
 		// initialize the likelihood list.
 		iterLikelihood = new ArrayList<Double>();

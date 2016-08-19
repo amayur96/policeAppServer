@@ -8,6 +8,10 @@ public class Cluster {
 	public double[] alpha;
 	public double logL;
 
+	public Cluster() {
+		grids = new ArrayList<Grid>();
+		
+	}
 	public void put(Grid g) {
 		grids.add(g);
 	}
