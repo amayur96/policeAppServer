@@ -51,3 +51,9 @@ These should all return JSON files. Note that if you try to connect from the app
 Future Directions:
 
 This is a very barebones application that does the minimum, just to give you an idea of the requirements for functionality. In the future, this will have to be entirely rewritten in collaboration with the police department using a backend framework. It will have to incorporate real data and encryption.
+
+
+
+
+——————————
+Forecast model is in ClusteringAlgorithm.java It’s not complete.
